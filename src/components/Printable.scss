@@ -1,0 +1,81 @@
+@import url("https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+@media print {
+  * {
+    visibility: hidden;
+    font-family: "Tinos", serif;
+    font-size: 14pt;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .printable-container {
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8.27in;
+    min-height: 11.69in;
+    box-sizing: border-box;
+    page-break-after: auto;
+
+    * {
+      visibility: visible;
+    }
+
+    .letterhead {
+      margin-bottom: 8px;
+
+      .info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .mtrh-logo {
+          height: 80px;
+          width: auto;
+        }
+
+        .iso-logo {
+          height: 36px;
+          width: auto;
+        }
+      }
+      .contact {
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .right {
+          text-align: right;
+        }
+      }
+    }
+
+    .patient-info {
+      margin-bottom: 8px;
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+
+        td {
+          padding: 6px;
+          vertical-align: top;
+
+          &:first-child {
+            font-weight: bold;
+            width: 40%;
+          }
+        }
+      }
+    }
+  }
+
+  @page {
+    size: A4;
+    margin: 1in;
+  }
+}
