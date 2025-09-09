@@ -69,6 +69,7 @@ const MainToolbarContent = ({
   isMobile,
   onPrintClick,
   patient,
+  content,
 }: {
   onHighlighterClick: () => void;
   onLinkClick: () => void;
@@ -78,11 +79,15 @@ const MainToolbarContent = ({
   patient: any;
 }) => {
   async function handleSave() {
-    console.log(patient);
-    // const res = await fetch("http://127.0.0.1/api/notes", {
-    //   method: "POST",
-    //   body: JSON.stringify({ uid: patient.uid }),
-    // });
+    const { patient_id, dicom_uid } = patient;
+    const res = await fetch("http://172.16.0.29/api/notes", {
+      method: "POST",
+      body: JSON.stringify({ id: patient_id, uid: dicom_uid, note: content }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (res.status === 200) return true;
+    return false;
   }
   return (
     <>
@@ -95,10 +100,10 @@ const MainToolbarContent = ({
 
       <ToolbarSeparator />
 
-      <ToolbarGroup>
-        <UndoRedoButton action="undo" />
-        <UndoRedoButton action="redo" />
-      </ToolbarGroup>
+      {/* <ToolbarGroup> */}
+      {/*   <UndoRedoButton action="undo" /> */}
+      {/*   <UndoRedoButton action="redo" /> */}
+      {/* </ToolbarGroup> */}
 
       <ToolbarSeparator />
 
@@ -186,6 +191,21 @@ export function SimpleEditor({ patient }: any) {
     "main" | "highlighter" | "link"
   >("main");
   const toolbarRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!patient) return;
+
+    const getReport = async () => {
+      const res = await fetch(
+        "http://172.16.0.29/api/notes/" + patient.dicom_uid,
+      );
+      const data = await res.json();
+
+      if (data.note) editor?.commands.setContent(data.note);
+    };
+
+    getReport();
+  }, [patient]);
 
   const editor = useEditor({
     editable: true,
