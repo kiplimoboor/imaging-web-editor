@@ -3,15 +3,15 @@ import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor
 
 function App() {
   const [patient, setPatient] = useState(null);
+
   useEffect(() => {
     const handler = (event: MessageEvent) => {
-      if (event.data?.type === "INIT_PROPS") setPatient(event.data.payload);
+      if (event.data?.type === "STUDY_DATA") setPatient(event.data.payload);
     };
 
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
   }, []);
-
   return <SimpleEditor patient={patient} />;
 }
 

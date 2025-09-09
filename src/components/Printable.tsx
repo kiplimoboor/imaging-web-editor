@@ -19,27 +19,27 @@ const Printable = forwardRef<HTMLDivElement, PrintableProps>(
               <tbody>
                 <tr>
                   <td>Patient Name:</td>
-                  <td>{patient?.name}</td>
+                  <td>{patient?.patient_name || "Not Specified"}</td>
                 </tr>
                 <tr>
                   <td>Patient ID:</td>
-                  <td>{patient?.id}</td>
+                  <td>{patient?.patient_id || "Not Specified"}</td>
                 </tr>
                 <tr>
                   <td>Gender:</td>
-                  <td>N/A</td>
+                  <td>{patient?.gender || "Not Specified"}</td>
                 </tr>
                 <tr>
                   <td>Date of Birth:</td>
-                  <td>N/A</td>
+                  <td>{patient?.dob || "Not Specified"}</td>
                 </tr>
                 <tr>
                   <td>Examination:</td>
-                  <td>N/A</td>
+                  <td>{patient?.examination || "Not Specified"}</td>
                 </tr>
                 <tr>
                   <td>Examination Date:</td>
-                  <td>{patient?.date}</td>
+                  <td>{patient?.study_date || "Not Specified"}</td>
                 </tr>
               </tbody>
             </table>
