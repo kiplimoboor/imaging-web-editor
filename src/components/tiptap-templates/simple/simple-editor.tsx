@@ -9,6 +9,9 @@ import TextField from "@mui/material/TextField";
 
 import { useReactToPrint } from "react-to-print";
 
+import Alert from "@mui/material/Alert";
+import Snackbar, { type SnackbarCloseReason } from "@mui/material/Snackbar";
+
 // --- Tiptap Core Extensions ---
 import { Highlight } from "@tiptap/extension-highlight";
 import { Image } from "@tiptap/extension-image";
@@ -67,6 +70,7 @@ import { HeadingButton } from "@/components/tiptap-ui/heading-button";
 const MainToolbarContent = ({
   isMobile,
   onPrintClick,
+  confirmSave,
   patient,
   content,
 }: {
@@ -74,6 +78,7 @@ const MainToolbarContent = ({
   onLinkClick: () => void;
   isMobile: boolean;
   onPrintClick: () => void;
+  confirmSave: (state: boolean) => any;
   content: string | undefined;
   patient: any;
 }) => {
@@ -84,8 +89,10 @@ const MainToolbarContent = ({
       body: JSON.stringify({ id: patient_id, uid: dicom_uid, note: content }),
       headers: { "Content-Type": "application/json" },
     });
-
-    if (res.status === 200) return true;
+    if (res.status === 201) {
+      confirmSave(true);
+      return true;
+    }
     return false;
   }
   return (
@@ -133,7 +140,13 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <Button onClick={() => onPrintClick()} data-stye="ghost">
+        <Button
+          onClick={() => {
+            handleSave();
+            onPrintClick();
+          }}
+          data-stye="ghost"
+        >
           <img src="print.png" style={{ height: "24px", width: "auto" }}></img>
         </Button>
       </ToolbarGroup>
@@ -194,6 +207,16 @@ export function SimpleEditor({ patient }: any) {
     if (Boolean(templateValue)) editor?.commands.setContent(templates[templateValue]);
     else editor?.commands.setContent("");
   }, [templateValue]);
+
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+
+  const handleClose = (_: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  };
 
   const editor = useEditor({
     editable: true,
@@ -292,6 +315,7 @@ export function SimpleEditor({ patient }: any) {
               onPrintClick={reactToPrintFn}
               content={editor?.getHTML()}
               patient={patient}
+              confirmSave={setSnackbarOpen}
             />
           ) : (
             <MobileToolbarContent
@@ -307,6 +331,17 @@ export function SimpleEditor({ patient }: any) {
 
         <EditorContent editor={editor} role="presentation" className="simple-editor-content" />
       </EditorContext.Provider>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert onClose={handleClose} severity="success" variant="filled" sx={{ width: "100%" }}>
+          Report Saved Successfully
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
