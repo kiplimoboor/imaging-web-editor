@@ -191,12 +191,8 @@ export function SimpleEditor({ patient }: any) {
   }, [patient]);
 
   React.useEffect(() => {
-    console.log(templateValue);
-    if (Boolean(templateValue)) {
-      editor?.commands.setContent(templates[templateValue]);
-    } else {
-      editor?.commands.setContent("");
-    }
+    if (Boolean(templateValue)) editor?.commands.setContent(templates[templateValue]);
+    else editor?.commands.setContent("");
   }, [templateValue]);
 
   const editor = useEditor({
@@ -268,6 +264,8 @@ export function SimpleEditor({ patient }: any) {
             onChange={(_, newValue: string | null) => {
               if (newValue !== null) {
                 setTemplateValue(newValue);
+              } else {
+                setTemplateValue("");
               }
             }}
             id="controllable-states-demo"
