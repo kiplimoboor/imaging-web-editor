@@ -265,7 +265,11 @@ export function SimpleEditor({ patient }: any) {
           <Autocomplete
             value={templateValue}
             options={Object.keys(templates)}
-            onChange={(_, newValue: string | null) => setTemplateValue(newValue)}
+            onChange={(_, newValue: string | null) => {
+              if (newValue !== null) {
+                setTemplateValue(newValue);
+              }
+            }}
             id="controllable-states-demo"
             disablePortal
             sx={{ width: 450 }}
