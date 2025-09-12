@@ -1,6 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 @media print {
+  @page {
+    size: A4;
+    margin: 1in 1in 1in 1in;
+  }
+
   * {
     visibility: hidden;
     font-family: "Tinos", serif;
@@ -18,7 +23,6 @@
     min-height: 11.69in;
     box-sizing: border-box;
     page-break-after: auto;
-    padding-bottom: 30mm; /* reserve space for footer */
 
     * {
       visibility: visible;
@@ -74,18 +78,9 @@
       }
     }
 
-    footer {
-      position: fixed;
-      bottom: 0.5in;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      font-size: 10pt;
+    .signature {
+      margin-top: 72pt;
+      font-weight: bold;
     }
-  }
-
-  @page {
-    size: A4;
-    margin: 1in 1in 0 1in;
   }
 }

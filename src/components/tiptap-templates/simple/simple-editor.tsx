@@ -1,45 +1,45 @@
 "use client";
 
-import * as React from "react";
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
+import * as React from "react";
+
+import templates from "@/templates/templates";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 import { useReactToPrint } from "react-to-print";
 
 // --- Tiptap Core Extensions ---
-import { StarterKit } from "@tiptap/starter-kit";
+import { Highlight } from "@tiptap/extension-highlight";
 import { Image } from "@tiptap/extension-image";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
-import { TextAlign } from "@tiptap/extension-text-align";
-import { Typography } from "@tiptap/extension-typography";
-import { Highlight } from "@tiptap/extension-highlight";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
+import { TextAlign } from "@tiptap/extension-text-align";
+import { Typography } from "@tiptap/extension-typography";
 import { Placeholder, Selection } from "@tiptap/extensions";
+import { StarterKit } from "@tiptap/starter-kit";
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button";
 import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
-import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-} from "@/components/tiptap-ui-primitive/toolbar";
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/components/tiptap-ui-primitive/toolbar";
 
 // --- Tiptap Node ---
-import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension";
-import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension";
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss";
 import "@/components/tiptap-node/code-block-node/code-block-node.scss";
-import "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node.scss";
-import "@/components/tiptap-node/list-node/list-node.scss";
-import "@/components/tiptap-node/image-node/image-node.scss";
 import "@/components/tiptap-node/heading-node/heading-node.scss";
+import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension";
+import "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node.scss";
+import "@/components/tiptap-node/image-node/image-node.scss";
+import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension";
+import "@/components/tiptap-node/list-node/list-node.scss";
 import "@/components/tiptap-node/paragraph-node/paragraph-node.scss";
 
 // --- Tiptap UI ---
-import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu";
 import { ColorHighlightPopoverContent } from "@/components/tiptap-ui/color-highlight-popover";
 import { LinkContent } from "@/components/tiptap-ui/link-popover";
+import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu";
 import { MarkButton } from "@/components/tiptap-ui/mark-button";
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 
@@ -49,9 +49,9 @@ import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon";
 import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 
 // --- Hooks ---
+import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useWindowSize } from "@/hooks/use-window-size";
-import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 
 // --- Components ---
 import Printable from "@/components/Printable";
@@ -119,10 +119,7 @@ const MainToolbarContent = ({
         <HeadingButton level={2} />
         <HeadingButton level={3} />
 
-        <ListDropdownMenu
-          types={["bulletList", "orderedList", "taskList"]}
-          portal={isMobile}
-        />
+        <ListDropdownMenu types={["bulletList", "orderedList", "taskList"]} portal={isMobile} />
       </ToolbarGroup>
 
       <ToolbarSeparator />
@@ -151,13 +148,7 @@ const MainToolbarContent = ({
   );
 };
 
-const MobileToolbarContent = ({
-  type,
-  onBack,
-}: {
-  type: "highlighter" | "link";
-  onBack: () => void;
-}) => (
+const MobileToolbarContent = ({ type, onBack }: { type: "highlighter" | "link"; onBack: () => void }) => (
   <>
     <ToolbarGroup>
       <Button data-style="ghost" onClick={onBack}>
@@ -172,32 +163,25 @@ const MobileToolbarContent = ({
 
     <ToolbarSeparator />
 
-    {type === "highlighter" ? (
-      <ColorHighlightPopoverContent />
-    ) : (
-      <LinkContent />
-    )}
+    {type === "highlighter" ? <ColorHighlightPopoverContent /> : <LinkContent />}
   </>
 );
 
 export function SimpleEditor({ patient }: any) {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
+  const [templateValue, setTemplateValue] = React.useState<string>("");
 
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
-  const [mobileView, setMobileView] = React.useState<
-    "main" | "highlighter" | "link"
-  >("main");
+  const [mobileView, setMobileView] = React.useState<"main" | "highlighter" | "link">("main");
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (!patient) return;
 
     const getReport = async () => {
-      const res = await fetch(
-        "http://172.16.0.29/api/notes/" + patient.dicom_uid,
-      );
+      const res = await fetch("http://172.16.0.29/api/notes/" + patient.dicom_uid);
       const data = await res.json();
 
       if (data.note) editor?.commands.setContent(data.note);
@@ -205,6 +189,15 @@ export function SimpleEditor({ patient }: any) {
 
     getReport();
   }, [patient]);
+
+  React.useEffect(() => {
+    console.log(templateValue);
+    if (Boolean(templateValue)) {
+      editor?.commands.setContent(templates[templateValue]);
+    } else {
+      editor?.commands.setContent("");
+    }
+  }, [templateValue]);
 
   const editor = useEditor({
     editable: true,
@@ -262,6 +255,23 @@ export function SimpleEditor({ patient }: any) {
   return (
     <div className="simple-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            margin: "12px",
+          }}
+        >
+          <Autocomplete
+            value={templateValue}
+            options={Object.keys(templates)}
+            onChange={(_, newValue: string | null) => setTemplateValue(newValue)}
+            id="controllable-states-demo"
+            disablePortal
+            sx={{ width: 450 }}
+            renderInput={(params) => <TextField {...params} label="Template" />}
+          />
+        </div>
         <Toolbar
           ref={toolbarRef}
           style={{
@@ -290,18 +300,10 @@ export function SimpleEditor({ patient }: any) {
         </Toolbar>
 
         <div style={{ display: "none" }}>
-          <Printable
-            content={editor?.getHTML()}
-            ref={contentRef}
-            patient={patient}
-          />
+          <Printable content={editor?.getHTML()} ref={contentRef} patient={patient} />
         </div>
 
-        <EditorContent
-          editor={editor}
-          role="presentation"
-          className="simple-editor-content"
-        />
+        <EditorContent editor={editor} role="presentation" className="simple-editor-content" />
       </EditorContext.Provider>
     </div>
   );
