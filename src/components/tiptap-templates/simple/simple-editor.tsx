@@ -186,7 +186,6 @@ export function SimpleEditor({ patient }: any) {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
   const [templateValue, setTemplateValue] = React.useState<string>("");
-  const [canEdit, setCanEdit] = React.useState<boolean>(false);
 
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
@@ -222,7 +221,7 @@ export function SimpleEditor({ patient }: any) {
   };
 
   const editor = useEditor({
-    editable: canEdit,
+    editable: false,
     immediatelyRender: false,
     shouldRerenderOnTransaction: true,
     editorProps: {
@@ -269,7 +268,6 @@ export function SimpleEditor({ patient }: any) {
     if (token != null && patient != null) {
       const user = decodeJwt(token);
       const isRadiologist = user.id === patient.radiologist;
-      setCanEdit(isRadiologist);
 
       if (editor) {
         editor.setOptions({ editable: isRadiologist });
@@ -298,23 +296,21 @@ export function SimpleEditor({ patient }: any) {
             margin: "12px",
           }}
         >
-          {canEdit && (
-            <Autocomplete
-              value={templateValue}
-              options={Object.keys(templates)}
-              onChange={(_, newValue: string | null) => {
-                if (newValue !== null) {
-                  setTemplateValue(newValue);
-                } else {
-                  setTemplateValue("");
-                }
-              }}
-              id="controllable-states-demo"
-              disablePortal
-              sx={{ width: 450 }}
-              renderInput={(params) => <TextField {...params} label="Template" />}
-            />
-          )}
+          <Autocomplete
+            value={templateValue}
+            options={Object.keys(templates)}
+            onChange={(_, newValue: string | null) => {
+              if (newValue !== null) {
+                setTemplateValue(newValue);
+              } else {
+                setTemplateValue("");
+              }
+            }}
+            id="controllable-states-demo"
+            disablePortal
+            sx={{ width: 450 }}
+            renderInput={(params) => <TextField {...params} label="Template" />}
+          />
         </div>
         <Toolbar
           ref={toolbarRef}
@@ -350,18 +346,17 @@ export function SimpleEditor({ patient }: any) {
 
         <EditorContent editor={editor} role="presentation" className="simple-editor-content" />
       </EditorContext.Provider>
-      {canEdit && (
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        >
-          <Alert onClose={handleClose} severity="success" variant="filled" sx={{ width: "100%" }}>
-            Report Saved Successfully
-          </Alert>
-        </Snackbar>
-      )}
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert onClose={handleClose} severity="success" variant="filled" sx={{ width: "100%" }}>
+          Report Saved Successfully
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
