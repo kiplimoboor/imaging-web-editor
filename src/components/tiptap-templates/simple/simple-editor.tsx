@@ -69,8 +69,6 @@ import "@/components/tiptap-templates/simple/simple-editor.scss";
 
 import { HeadingButton } from "@/components/tiptap-ui/heading-button";
 
-const user = decodeJwt(localStorage.getItem("token"));
-
 const MainToolbarContent = ({
   isMobile,
   onPrintClick,
@@ -195,7 +193,6 @@ export function SimpleEditor({ patient }: any) {
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    console.log(patient);
     if (!patient) return;
 
     const getReport = async () => {
@@ -224,7 +221,6 @@ export function SimpleEditor({ patient }: any) {
   };
 
   const editor = useEditor({
-    editable: patient.radiologist === user.id,
     immediatelyRender: false,
     shouldRerenderOnTransaction: true,
     editorProps: {
@@ -267,14 +263,10 @@ export function SimpleEditor({ patient }: any) {
 
   React.useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token != null && patient != null) {
       const user = decodeJwt(token);
       const isRadiologist = user.id === patient.radiologist;
-
-      if (editor) {
-        editor.setOptions({ editable: isRadiologist });
-      }
+      editor?.setEditable(isRadiologist);
     }
   }, [patient, editor]);
 
