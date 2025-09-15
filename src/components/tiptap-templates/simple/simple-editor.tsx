@@ -220,6 +220,15 @@ export function SimpleEditor({ patient }: any) {
     setSnackbarOpen(false);
   };
 
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token != null && patient != null) {
+      const user = decodeJwt(token);
+      const isRadiologist = user.id === patient.radiologist;
+      editor?.setEditable(isRadiologist);
+    }
+  }, [patient]);
+
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: true,
@@ -260,15 +269,6 @@ export function SimpleEditor({ patient }: any) {
       }),
     ],
   });
-
-  React.useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token != null && patient != null) {
-      const user = decodeJwt(token);
-      const isRadiologist = user.id === patient.radiologist;
-      editor?.setEditable(isRadiologist);
-    }
-  }, [patient, editor]);
 
   const rect = useCursorVisibility({
     editor,
