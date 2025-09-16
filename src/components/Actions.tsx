@@ -13,8 +13,9 @@ interface ActionsProps {
 }
 function Actions({ editor, setAlert, printFn }: ActionsProps) {
   const { user, study } = useStudy();
+  console.log(user?.canEdit);
 
-  const handleChange = (newValue: string | null) => {
+  const handleChangeTemplate = (newValue: string | null) => {
     if (newValue !== null) editor?.commands.setContent(templates[newValue]);
     else editor?.commands.setContent("");
   };
@@ -30,30 +31,32 @@ function Actions({ editor, setAlert, printFn }: ActionsProps) {
       console.log(study?.dicom_uid);
       if (study && editor) study.note = editor?.getHTML();
       setAlert(true);
-      return true;
     }
-    return false;
   };
 
-  const handlePrint = () => {
-    if (study?.note !== editor?.getHTML()) handleSave();
+  const handlePrint = async () => {
+    if (study?.note !== editor?.getHTML() && user?.canEdit) {
+      await handleSave();
+    }
     printFn();
   };
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "8px", margin: "12px", justifyContent: "center" }}>
       <Autocomplete
+        disabled={!user?.canEdit}
         options={Object.keys(templates)}
-        onChange={(_, newValue: string | null) => handleChange(newValue)}
+        onChange={(_, newValue: string | null) => handleChangeTemplate(newValue)}
         disablePortal
         sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label="Choose a Template" size="small" sx={{ height: 40 }} />}
       />
+      <Button startIcon={<SaveIcon />} variant="contained" size="medium" onClick={handleSave} disabled={!user?.canEdit}>
+        Save
+      </Button>
+
       <Button startIcon={<PrintIcon />} variant="outlined" size="medium" onClick={handlePrint}>
         Print
-      </Button>
-      <Button startIcon={<SaveIcon />} variant="contained" size="medium" onClick={handleSave}>
-        Save
       </Button>
     </div>
   );
