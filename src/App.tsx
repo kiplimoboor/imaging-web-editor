@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
 import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+import { StudyProvider } from "@/context/StudyContext";
+import { useEffect, useState } from "react";
 
 function App() {
   const [patient, setPatient] = useState(null);
@@ -12,7 +13,13 @@ function App() {
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);
   }, []);
-  return <SimpleEditor patient={patient} />;
+  return (
+    <>
+      <StudyProvider>
+        <SimpleEditor patient={patient} />
+      </StudyProvider>
+    </>
+  );
 }
 
 export default App;

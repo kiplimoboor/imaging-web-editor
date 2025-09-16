@@ -11,9 +11,6 @@ import TextField from "@mui/material/TextField";
 
 import { useReactToPrint } from "react-to-print";
 
-import Alert from "@mui/material/Alert";
-import Snackbar, { type SnackbarCloseReason } from "@mui/material/Snackbar";
-
 // --- Tiptap Core Extensions ---
 import { Highlight } from "@tiptap/extension-highlight";
 import { Image } from "@tiptap/extension-image";
@@ -67,125 +64,119 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
 
+import Actions from "@/components/Actions";
+import SnackbarAlert from "@/components/SnackbarAlert";
 import { HeadingButton } from "@/components/tiptap-ui/heading-button";
+import TiptapToolbar from "@/components/Toolbar";
 
-const MainToolbarContent = ({
-  isMobile,
-  onPrintClick,
-  confirmSave,
-  patient,
-  content,
-}: {
-  onHighlighterClick: () => void;
-  onLinkClick: () => void;
-  isMobile: boolean;
-  onPrintClick: () => void;
-  confirmSave: (state: boolean) => any;
-  content: string | undefined;
-  patient: any;
-}) => {
-  async function handleSave() {
-    const { patient_id, dicom_uid } = patient;
-    const res = await fetch("http://172.16.0.29/api/notes", {
-      method: "POST",
-      body: JSON.stringify({ id: patient_id, uid: dicom_uid, note: content }),
-      headers: { "Content-Type": "application/json" },
-    });
-    if (res.status === 201) {
-      confirmSave(true);
-      return true;
-    }
-    return false;
-  }
-  return (
-    <>
-      <Spacer />
-      <ToolbarGroup>
-        <Button onClick={handleSave} data-stye="ghost">
-          <img src="save.png" style={{ height: "24px", width: "auto" }}></img>
-        </Button>
-      </ToolbarGroup>
+// const MainToolbarContent = ({
+//   isMobile,
+//   onPrintClick,
+//   confirmSave,
+//   patient,
+//   content,
+// }: {
+//   onHighlighterClick: () => void;
+//   onLinkClick: () => void;
+//   isMobile: boolean;
+//   onPrintClick: () => void;
+//   confirmSave: (state: boolean) => any;
+//   content: string | undefined;
+//   patient: any;
+// }) => {
+//   async function handleSave() {
+//     const { patient_id, dicom_uid } = patient;
+//     const res = await fetch("http://172.16.0.29/api/notes", {
+//       method: "POST",
+//       body: JSON.stringify({ id: patient_id, uid: dicom_uid, note: content }),
+//       headers: { "Content-Type": "application/json" },
+//     });
+//     if (res.status === 201) {
+//       confirmSave(true);
+//       return true;
+//     }
+//     return false;
+//   }
+//   return (
+//     <>
+//       <Spacer />
+//       <ToolbarGroup>
+//         <Button onClick={handleSave} data-stye="ghost">
+//           <img src="save.png" style={{ height: "24px", width: "auto" }}></img>
+//         </Button>
+//       </ToolbarGroup>
+//
+//       <ToolbarSeparator />
+//
+//       <ToolbarSeparator />
+//
+//       <ToolbarGroup>
+//         <MarkButton type="bold" />
+//         <MarkButton type="italic" />
+//         <MarkButton type="underline" />
+//       </ToolbarGroup>
+//
+//       <ToolbarSeparator />
+//
+//       <ToolbarGroup>
+//         <HeadingButton level={1} />
+//         <HeadingButton level={2} />
+//         <HeadingButton level={3} />
+//
+//         <ListDropdownMenu types={["bulletList", "orderedList", "taskList"]} portal={isMobile} />
+//       </ToolbarGroup>
+//
+//       <ToolbarSeparator />
+//
+//       <ToolbarGroup>
+//         <TextAlignButton align="left" />
+//         <TextAlignButton align="center" />
+//         <TextAlignButton align="right" />
+//       </ToolbarGroup>
+//
+//       <ToolbarSeparator />
+//
+//       <ToolbarGroup>
+//         <Button
+//           onClick={() => {
+//             handleSave();
+//             onPrintClick();
+//           }}
+//           data-stye="ghost"
+//         >
+//           <img src="print.png" style={{ height: "24px", width: "auto" }}></img>
+//         </Button>
+//       </ToolbarGroup>
+//       <Spacer />
+//
+//       {isMobile && <ToolbarSeparator />}
+//     </>
+//   );
+// };
 
-      <ToolbarSeparator />
-
-      {/* <ToolbarGroup> */}
-      {/*   <UndoRedoButton action="undo" /> */}
-      {/*   <UndoRedoButton action="redo" /> */}
-      {/* </ToolbarGroup> */}
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <MarkButton type="bold" />
-        <MarkButton type="italic" />
-        <MarkButton type="underline" />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <HeadingButton level={1} />
-        <HeadingButton level={2} />
-        <HeadingButton level={3} />
-
-        <ListDropdownMenu types={["bulletList", "orderedList", "taskList"]} portal={isMobile} />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <TextAlignButton align="left" />
-        <TextAlignButton align="center" />
-        <TextAlignButton align="right" />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <Button
-          onClick={() => {
-            handleSave();
-            onPrintClick();
-          }}
-          data-stye="ghost"
-        >
-          <img src="print.png" style={{ height: "24px", width: "auto" }}></img>
-        </Button>
-      </ToolbarGroup>
-      <Spacer />
-
-      {isMobile && <ToolbarSeparator />}
-
-      {/* <ToolbarGroup> */}
-      {/*   <ThemeToggle /> */}
-      {/* </ToolbarGroup> */}
-    </>
-  );
-};
-
-const MobileToolbarContent = ({ type, onBack }: { type: "highlighter" | "link"; onBack: () => void }) => (
-  <>
-    <ToolbarGroup>
-      <Button data-style="ghost" onClick={onBack}>
-        <ArrowLeftIcon className="tiptap-button-icon" />
-        {type === "highlighter" ? (
-          <HighlighterIcon className="tiptap-button-icon" />
-        ) : (
-          <LinkIcon className="tiptap-button-icon" />
-        )}
-      </Button>
-    </ToolbarGroup>
-
-    <ToolbarSeparator />
-
-    {type === "highlighter" ? <ColorHighlightPopoverContent /> : <LinkContent />}
-  </>
-);
+// const MobileToolbarContent = ({ type, onBack }: { type: "highlighter" | "link"; onBack: () => void }) => (
+//   <>
+//     <ToolbarGroup>
+//       <Button data-style="ghost" onClick={onBack}>
+//         <ArrowLeftIcon className="tiptap-button-icon" />
+//         {type === "highlighter" ? (
+//           <HighlighterIcon className="tiptap-button-icon" />
+//         ) : (
+//           <LinkIcon className="tiptap-button-icon" />
+//         )}
+//       </Button>
+//     </ToolbarGroup>
+//
+//     <ToolbarSeparator />
+//
+//     {type === "highlighter" ? <ColorHighlightPopoverContent /> : <LinkContent />}
+//   </>
+// );
 
 export function SimpleEditor({ patient }: any) {
   const contentRef = React.useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
-  const [templateValue, setTemplateValue] = React.useState<string>("");
+  // const [templateValue, setTemplateValue] = React.useState<string>("");
 
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
@@ -205,20 +196,12 @@ export function SimpleEditor({ patient }: any) {
     getReport();
   }, [patient]);
 
-  React.useEffect(() => {
-    if (Boolean(templateValue)) editor?.commands.setContent(templates[templateValue]);
-    else editor?.commands.setContent("");
-  }, [templateValue]);
+  // React.useEffect(() => {
+  //   if (Boolean(templateValue)) editor?.commands.setContent(templates[templateValue]);
+  //   else editor?.commands.setContent("");
+  // }, [templateValue]);
 
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-
-  const handleClose = (_: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setSnackbarOpen(false);
-  };
+  const [snackbarOpen, setAlert] = React.useState(false);
 
   React.useEffect(() => {
     const token = localStorage.getItem("token");
@@ -233,23 +216,11 @@ export function SimpleEditor({ patient }: any) {
     immediatelyRender: false,
     shouldRerenderOnTransaction: true,
     editorProps: {
-      attributes: {
-        autocomplete: "off",
-        autocorrect: "off",
-        autocapitalize: "off",
-        "aria-label": "Main content area, start typing to enter text.",
-        class: "simple-editor",
-      },
+      attributes: { autocomplete: "off", autocorrect: "off", autocapitalize: "off", class: "simple-editor" },
     },
     extensions: [
       Placeholder.configure({ placeholder: "Start typing report" }),
-      StarterKit.configure({
-        horizontalRule: false,
-        link: {
-          openOnClick: false,
-          enableClickSelection: true,
-        },
-      }),
+      StarterKit.configure({ horizontalRule: false, link: { openOnClick: false, enableClickSelection: true } }),
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       TaskList,
@@ -270,69 +241,18 @@ export function SimpleEditor({ patient }: any) {
     ],
   });
 
-  const rect = useCursorVisibility({
-    editor,
-    overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
-  });
+  const rect = useCursorVisibility({ editor, overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0 });
 
   React.useEffect(() => {
-    if (!isMobile && mobileView !== "main") {
-      setMobileView("main");
-    }
+    if (!isMobile && mobileView !== "main") setMobileView("main");
   }, [isMobile, mobileView]);
 
   return (
-    <div className="simple-editor-wrapper">
+    <div className="">
       <EditorContext.Provider value={{ editor }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            margin: "12px",
-          }}
-        >
-          <Autocomplete
-            value={templateValue}
-            options={Object.keys(templates)}
-            onChange={(_, newValue: string | null) => {
-              if (newValue !== null) {
-                setTemplateValue(newValue);
-              } else {
-                setTemplateValue("");
-              }
-            }}
-            id="controllable-states-demo"
-            disablePortal
-            sx={{ width: 450 }}
-            renderInput={(params) => <TextField {...params} label="Template" />}
-          />
-        </div>
-        <Toolbar
-          ref={toolbarRef}
-          style={{
-            ...(isMobile
-              ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
-                }
-              : {}),
-          }}
-        >
-          {mobileView === "main" ? (
-            <MainToolbarContent
-              onHighlighterClick={() => setMobileView("highlighter")}
-              onLinkClick={() => setMobileView("link")}
-              isMobile={isMobile}
-              onPrintClick={reactToPrintFn}
-              content={editor?.getHTML()}
-              patient={patient}
-              confirmSave={setSnackbarOpen}
-            />
-          ) : (
-            <MobileToolbarContent
-              type={mobileView === "highlighter" ? "highlighter" : "link"}
-              onBack={() => setMobileView("main")}
-            />
-          )}
+        <Actions editor={editor} setAlert={setAlert} printFn={reactToPrintFn} />
+        <Toolbar ref={toolbarRef} style={{ ...(isMobile ? { bottom: `calc(100% - ${height - rect.y}px)` } : {}) }}>
+          <TiptapToolbar />
         </Toolbar>
 
         <div style={{ display: "none" }}>
@@ -340,18 +260,9 @@ export function SimpleEditor({ patient }: any) {
         </div>
 
         <EditorContent editor={editor} role="presentation" className="simple-editor-content" />
-      </EditorContext.Provider>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert onClose={handleClose} severity="success" variant="filled" sx={{ width: "100%" }}>
-          Report Saved Successfully
-        </Alert>
-      </Snackbar>
+        <SnackbarAlert open={snackbarOpen} setAlert={setAlert} />
+      </EditorContext.Provider>
     </div>
   );
 }
