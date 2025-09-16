@@ -13,7 +13,6 @@ interface ActionsProps {
 }
 function Actions({ editor, setAlert, printFn }: ActionsProps) {
   const { user, study } = useStudy();
-  console.log(user?.canEdit);
 
   const handleChangeTemplate = (newValue: string | null) => {
     if (newValue !== null) editor?.commands.setContent(templates[newValue]);
@@ -27,8 +26,6 @@ function Actions({ editor, setAlert, printFn }: ActionsProps) {
       headers: { "Content-Type": "application/json" },
     });
     if (res.status === 201) {
-      console.log(user?.id);
-      console.log(study?.dicom_uid);
       if (study && editor) study.note = editor?.getHTML();
       setAlert(true);
     }
