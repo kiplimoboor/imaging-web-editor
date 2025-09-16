@@ -5,10 +5,6 @@ import { decodeJwt } from "jose";
 import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
 import * as React from "react";
 
-import templates from "@/templates/templates";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-
 import { useReactToPrint } from "react-to-print";
 
 // --- Tiptap Core Extensions ---
@@ -23,9 +19,7 @@ import { Placeholder, Selection } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 
 // --- UI Primitives ---
-import { Button } from "@/components/tiptap-ui-primitive/button";
-import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
-import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/components/tiptap-ui-primitive/toolbar";
+import { Toolbar } from "@/components/tiptap-ui-primitive/toolbar";
 
 // --- Tiptap Node ---
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss";
@@ -39,16 +33,8 @@ import "@/components/tiptap-node/list-node/list-node.scss";
 import "@/components/tiptap-node/paragraph-node/paragraph-node.scss";
 
 // --- Tiptap UI ---
-import { ColorHighlightPopoverContent } from "@/components/tiptap-ui/color-highlight-popover";
-import { LinkContent } from "@/components/tiptap-ui/link-popover";
-import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu";
-import { MarkButton } from "@/components/tiptap-ui/mark-button";
-import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
 
 // --- Icons ---
-import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
-import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon";
-import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 
 // --- Hooks ---
 import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
@@ -66,7 +52,6 @@ import "@/components/tiptap-templates/simple/simple-editor.scss";
 
 import Actions from "@/components/Actions";
 import SnackbarAlert from "@/components/SnackbarAlert";
-import { HeadingButton } from "@/components/tiptap-ui/heading-button";
 import TiptapToolbar from "@/components/Toolbar";
 
 // const MainToolbarContent = ({
