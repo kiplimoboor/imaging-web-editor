@@ -1,4 +1,5 @@
 import { useStudy } from "@/context/StudyContext";
+import { useUser } from "@/context/UserContext";
 import templates from "@/templates/templates";
 import PrintIcon from "@mui/icons-material/Print";
 import SaveIcon from "@mui/icons-material/Save";
@@ -12,7 +13,8 @@ interface ActionsProps {
   printFn: () => void;
 }
 function Actions({ editor, setAlert, printFn }: ActionsProps) {
-  const { user, study } = useStudy();
+  const { study } = useStudy();
+  const { user } = useUser();
 
   const handleChangeTemplate = (newValue: string | null) => {
     if (newValue !== null) editor?.commands.setContent(templates[newValue]);

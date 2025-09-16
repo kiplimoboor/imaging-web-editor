@@ -11,6 +11,7 @@ import "@/components/tiptap-node/paragraph-node/paragraph-node.scss";
 import "@/components/tiptap-templates/simple/simple-editor.scss";
 
 import { useStudy } from "@/context/StudyContext";
+import { useUser } from "@/context/UserContext";
 import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useWindowSize } from "@/hooks/use-window-size";
@@ -31,7 +32,8 @@ export function SimpleEditor() {
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   const reactToPrintFn = useReactToPrint({ contentRef });
-  const { study, user } = useStudy();
+  const { study } = useStudy();
+  const { user } = useUser();
 
   React.useEffect(() => {
     if (study == null) return;
